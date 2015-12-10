@@ -298,3 +298,20 @@ textarea {
         page-break-after: avoid;
     }
 }
+
+#medeni-error{
+	position: absolute;
+    left: 120px;
+    
+}
+
+#askerlik-error{
+	position: absolute;
+    left: 185px;
+    
+}
+
+.error{
+	color:red;
+	    font-size: 11px;
+}

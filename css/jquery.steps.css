@@ -73,7 +73,7 @@
 
 .wizard > .steps > ul > li
 {
-    width: 25%;
+    width: 12%;
 }
 
 .wizard > .steps > ul > li,
@@ -163,10 +163,10 @@
 .wizard > .content > .body
 {
     float: left;
-    position: absolute;
+    position: relative;
     width: 95%;
     height: 95%;
-    padding: 2.5%;
+    padding: 2%;
 }
 
 .wizard > .content > .body ul
