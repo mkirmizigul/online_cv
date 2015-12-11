@@ -35,7 +35,8 @@
 
     
     <script src="js/bootstrap-tagsinput.js"></script>
-        <script src="js/jquery.bootstrap.wizard.js"></script>
+    <script src="js/jquery.bootstrap.wizard.js"></script>
+    <script src="js/jquery.tabletojson.js"></script>
 </head>
 
 <body>
@@ -102,13 +103,44 @@
                 	    todayHighlight:true,
                 	});
 
+
+                	$('.input-daterange').datepicker({
+                	    format: 'dd/mm/yyyy',
+                	    language:'tr',
+                	    todayHighlight:true,
+                	});
+
+
+                	$('.input-daterange').on('changeDate', function(ev){ //tarih seçimi yaptıktan sonra form gizlenir.
+                	    $(this).datepicker('hide');
+                	});
+                	
+
                 	$('.date').on('changeDate', function(ev){ //tarih seçimi yaptıktan sonra form gizlenir.
                 	    $(this).datepicker('hide');
                 	});
+
+                	$('.input-daterange').on('changeDate', function(ev){ //tarih seçimi yaptıktan sonra form gizlenir.
+                	    $(this).datepicker('hide');
+                	});
+
+                	/*$('.date_mezuniyet').datepicker({
+                	    format: 'dd/mm/yyyy',
+                	    language:'tr',
+                	    todayHighlight:true,
+                	});*/
+
+                	$('body').on('focus',".input-daterange", function(){
+                	    $(this).datepicker({
+                    	    format: 'dd/mm/yyyy',
+                    	    language:'tr',
+                    	    todayHighlight:true,
+                    	});
+                	});
                     
-              	  	$('#rootwizard').bootstrapWizard({
+              	  	/*$('#rootwizard').bootstrapWizard({
               	  		'tabClass': 'nav nav-tabs'
-                  	  	/*,
+                  	  	,
               	  		'onNext': function(tab, navigation, index) {
               	  			var $valid = $("#commentForm").valid();
               	  			if(!$valid) {
@@ -122,9 +154,97 @@
               	  				$validator.focusInvalid();
               	  				return false;
               	  			}
-              	  		},*/
+              	  		},
+
+                  	  		
               	  	
-              	  	});	
+              	  	});	*/
+
+              	  $('#rootwizard').bootstrapWizard({onTabShow: function(tab, navigation, index) {
+              		var $total = navigation.find('li').length;
+              		var $current = index+1;
+              		var $percent = ($current/$total) * 100;
+              		
+              		$('#rootwizard').find('.bar').css({width:$percent+'%'});
+              		
+              		// If it's the last tab then hide the last button and show the finish instead
+              		if($current >= $total) {
+              			$('#rootwizard').find('.pager .next').hide();
+              			$('#rootwizard').find('.pager .finish').show();
+              			$('#rootwizard').find('.pager .finish').removeClass('disabled');
+              		} else {
+              			$('#rootwizard').find('.pager .next').show();
+              			$('#rootwizard').find('.pager .finish').hide();
+              		}
+              		
+              	}});
+              	
+
+              	  $('#rootwizard .finish').click(function() {
+              		alert('Finished!, Starting over!');
+              		$('#rootwizard').find("a[href*='tab8']").trigger('click');
+
+              		
+              		  var table = $('#tab_pro').tableToJSON(); // Convert the table into a javascript object
+              		  
+              		  alert(JSON.stringify(table));
+              		
+              	});
+
+              	  var i=1;
+                  $("#add_row_pro").click(function(){
+                   $('#addr'+i).html("<td>"+ (i+1) +
+                           "</td><td>"+
+                           "<input name='firmaAdi"+i+"' type='text' placeholder='Çalıştığınız Firma Adı' class='form-control input-md'  /> </td>"+
+                           "<td><input  name='il"+i+"' type='text' placeholder='Çalıştığınız İl'  class='form-control input-md'></td>"+
+                           "<td><input  name='ilce"+i+"' type='text' placeholder='Çalıştığınız İlçe'  class='form-control input-md'></td>"+
+                           "<td><div class='input-group input-daterange' style='width:250px'>"+
+               			"<input id='baslangic"+i+"' name='baslangic"+i+"' type='text' placeholder='Başlangıç' class='form-control' value=''>"+
+               			"<span class='input-group-addon'>-</span>"+
+               			"<input id='bitis"+i+"' name='bitis"+i+"' type='text' placeholder='Bitiş' class='form-control' value=''>"+
+           				"</div></td>"+
+                           "<td><input  name='pozisyon"+i+"' type='text' placeholder='Çalıştığınız Pozisyon'  class='form-control input-md'></td>"+
+                           "<td><input  name='pozisyondetay"+i+"' type='text' placeholder='Çalıştığınız Pozisyon Detayları'  class='form-control input-md'></td>"
+                           );
+
+                   $('#tab_pro').append('<tr id="addr'+(i+1)+'"></tr>');
+                   i++; 
+               });
+                  $("#delete_row_pro").click(function(){
+                 	 if(i>1){
+             		 $("#addr"+(i-1)).html('');
+             		 i--;
+             		 }
+             	 });
+
+					/*eğitim tablo*/
+                  var i=1;
+                  $("#add_row_egitim").click(function(){
+                   $('#addr_egitim'+i).html("<td>"+ (i+1) +
+                           "</td><td>"+
+                           "<input name='okuladi1_"+i+"' type='text' placeholder='Çalıştığınız Firma Adı' class='form-control input-md'  /> </td>"+
+                           "<td><input  name='il"+i+"' type='text' placeholder='Çalıştığınız İl'  class='form-control input-md'></td>"+
+                           "<td><input  name='ilce"+i+"' type='text' placeholder='Çalıştığınız İlçe'  class='form-control input-md'></td>"+
+                           "<td><div class='input-group input-daterange' style='width:250px'>"+
+               			"<input id='baslangic"+i+"' name='baslangic"+i+"' type='text' placeholder='Başlangıç' class='form-control' value=''>"+
+               			"<span class='input-group-addon'>-</span>"+
+               			"<input id='bitis"+i+"' name='bitis"+i+"' type='text' placeholder='Bitiş' class='form-control' value=''>"+
+           				"</div></td>"+
+                           "<td><input  name='pozisyon"+i+"' type='text' placeholder='Çalıştığınız Pozisyon'  class='form-control input-md'></td>"+
+                           "<td><input  name='pozisyondetay"+i+"' type='text' placeholder='Çalıştığınız Pozisyon Detayları'  class='form-control input-md'></td>"
+                           );
+
+                   $('#tab_egitim').append('<tr id="addr_egitim'+(i+1)+'"></tr>');
+                   i++; 
+               });
+                  $("#delete_row_egitim").click(function(){
+                 	 if(i>1){
+             		 $("#addr_egitim"+(i-1)).html('');
+             		 i--;
+             		 }
+             	 });
+                	 
+                  /*eğitim tablo*/    	  	
                 	
                 });
             </script>
@@ -143,7 +263,8 @@
 		<li><a href="#tab4" data-toggle="tab">Eğitim</a></li>
 		<li><a href="#tab5" data-toggle="tab">Kurslar</a></li>
 		<li><a href="#tab6" data-toggle="tab">Yabancı Dil Bilgisi</a></li>
-		<li><a href="#tab6" data-toggle="tab">Bilgisayar Bilgisi</a></li>
+		<li><a href="#tab7" data-toggle="tab">Bilgisayar Bilgisi</a></li>
+		<li><a href="#tab8" data-toggle="tab">Özgeçmiş Görüntüle</a></li>
 	</ul>
 	
 	<div class="tab-content">
@@ -226,16 +347,282 @@
 	    
 	      
 	    </div>
+	    <br>
 		<div class="tab-pane" id="tab3">
 			<section style="height:518px">
-	    
+
+
+			
+			<table class="table table-bordered table-hover" id="tab_pro">
+				<thead>
+					<tr >
+						<th class="text-center">
+							#
+						</th>
+						<th class="text-center">
+							Çalıştığınız Firma Adı
+						</th>
+						<th class="text-center">
+							Çalıştığınız İl
+						</th>
+						<th class="text-center">
+							Çalıştığınız İlçe
+						</th>
+						<th class="text-center">
+							Çalıştığınız Tarih Aralığı
+						</th>
+						<th class="text-center">
+							Çalıştığınız Pozisyon
+						</th>
+						<th class="text-center">
+							Çalıştığınız Pozisyon Detayları
+							<br>
+							(Ayırmak için lütfen başına * işaretini koyunuz)
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id='addr0'>
+						<td>
+						1
+						</td>
+						<td>
+						<input type="text" name='firmaAdi0'  placeholder='Çalıştığınız Firma Adı' class="form-control input-md"/>
+						</td>
+						<td>
+						<input type="text" name='il0' placeholder='Çalıştığınız İl' class="form-control"/>
+						</td>
+						<td>
+						<input type="text" name='ilce0' placeholder='Çalıştığınız İlçe' class="form-control"/>
+						</td>
+						<td>
+						<div class="input-group input-daterange" style="width:250px">
+    			<input id="baslangic0" name="baslangic0" type="text" placeholder='Başlangıç' class="form-control" value="">
+    			<span class="input-group-addon">-</span>
+    			<input id="bitis0" name="bitis0" type="text" placeholder='Bitiş' class="form-control" value="">
+			</div>
+						</td>
+						<td>
+						<input type="text" name='pozisyon0' placeholder='Çalıştığınız Pozisyon' class="form-control"/>
+						</td>
+						<td>
+						<input type="text" name='pozisyondetaylar0' placeholder='Çalıştığınız Pozisyon Detayları' class="form-control input-md"/>						
+						</td>
+					</tr>
+                    <tr id='addr1'></tr>
+				</tbody>
+			</table>
+			<a id='delete_row_pro' class="pull-left btn btn-default">Satır Sil</a>
+			<a id="add_row_pro" class="btn btn-default pull-right">Satır Ekle</a>
 	    </section>
+	    </div>
+	    <div class="tab-pane" id="tab4">
+			<section style="height:518px">
+			<table class="table table-bordered table-hover" id="tab_egitim">
+				<thead>
+					<tr >
+						<th class="text-center">
+							#
+						</th>
+						<th class="text-center">
+							Okul Adı - 1
+						</th>
+						<th class="text-center">
+							Okul Adı - 2
+						</th>
+						<th class="text-center">
+							Bölümü 
+						</th>
+						<th class="text-center">
+							İl
+						</th>
+						<th class="text-center">
+							İlçe
+						</th>
+						<th class="text-center">
+							Mezuniyet Tarihi
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id='addr_egitim1'>
+						<td>
+						1
+						</td>
+						<td>
+						<input type="text" name='okuladi1_0'  placeholder='Okul Adı 1' class="form-control input-md"/>
+						</td>
+						<td>
+						<input type="text" name='okuladi2_0' placeholder='Okul Adı 1' class="form-control"/>
+						</td>
+						<td>
+						<input type="text" name='bolumu0' placeholder='Bölümü' class="form-control"/>
+						</td>
+						<td>
+						<input type="text" name='il0' placeholder='İl' class="form-control"/>
+						</td>
+						<td>
+						<input type="text" name='ilce0' placeholder='ilçe' class="form-control"/>
+						</td>
+						<td>
+						<div class="input-group date input-md" style="width: 250px" data-provide="datepicker" >
+    						<input type="text" class="form-control required" placeholder="Mezuniyet Tarihiniz gün/ay/yıl" id="mezuniyet" name="mezuniyet">
+    						<div class="input-group-addon">
+        					<span class="glyphicon glyphicon-th"></span>
+    					</div>
+						</div>    
+						</td>
+						
+					</tr>
+                    <tr id='addr1'></tr>
+				</tbody>
+			</table>
+			<a id="add_row_egitim" class="btn btn-default pull-left">Satır Ekle</a><a id='delete_row_egitim' class="pull-right btn btn-default">Satır Sil</a>
+		
+			</section>
+	    </div>
+	    <div class="tab-pane" id="tab5">
+			<section style="height:518px">
+			<label for="kariyer_deneyim">Kurs Bilgileriniz : </label>
+        	<br>
+          	<table class="table table-bordered table-hover" id="tab_kurs">
+				<thead>
+					<tr >
+						<th class="text-center">
+							#
+						</th>
+						<th class="text-center">
+							Kurs Adı
+						</th>
+						<th class="text-center">
+							Kurs Tarihi
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id='addr2'>
+						<td>
+						1
+						</td>
+						<td>
+						<input type="text" name='kursadi0'  placeholder='Kurs Adı' class="form-control input-md"/>
+						</td>
+						
+						<td>
+						<div class="input-group date input-md" style="width: 250px" data-provide="datepicker" >
+    						<input type="text" class="form-control required" placeholder="Kurs Tarihi gün/ay/yıl" id="mezuniyet" name="mezuniyet">
+    						<div class="input-group-addon">
+        					<span class="glyphicon glyphicon-th"></span>
+    					</div>
+						</div>    
+						</td>
+						
+					</tr>
+                    <tr id='addr1'></tr>
+				</tbody>
+			</table>
+			<a id="add_row_pro" class="btn btn-default pull-left">Satır Ekle</a><a id='delete_row_pro' class="pull-right btn btn-default">Satır Sil</a>
+			</section>
+	    </div>
+	    <div class="tab-pane" id="tab6">
+			<section style="height:518px">
+			<label for="kariyer_deneyim">Yabancı Dil Bilgileriniz : </label>
+        	<br>
+          	<table class="table table-bordered table-hover" id="tab_yabanci_dil">
+				<thead>
+					<tr >
+						<th class="text-center">
+							#
+						</th>
+						<th class="text-center">
+							Dil Adı
+						</th>
+						<th class="text-center">
+							Seviye (Okuma)
+						</th>
+						<th class="text-center">
+							Seviye (Yazma)
+						</th>
+						<th class="text-center">
+							Seviye (Konuşma)
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id='addr3'>
+						<td>
+						1
+						</td>
+						<td>
+						<input type="text" name='diladi0'  placeholder='Dil Adı' class="form-control input-md"/>
+						</td>
+						
+						<td>
+						<select class="form-control">
+						    <option name="okuma_seviye" value="başlangıç">Başlangıç</option>
+						    <option name="okuma_seviye" value="orta">Orta</option>
+						    <option name="okuma_seviye" value="ileri">İleri</option>
+						</select>
+						</div>    
+						</td>
+						<td>
+						<select class="form-control">
+						    <option name="yazma_seviye" value="başlangıç">Başlangıç</option>
+						    <option name="yazma_seviye" value="orta">Orta</option>
+						    <option name="yazma_seviye" value="ileri">İleri</option>
+						</select>
+						</div>    
+						</td>
+						<td>
+						<select class="form-control">
+						    <option name="konusma_seviye" value="başlangıç">Başlangıç</option>
+						    <option name="konusma_seviye" value="orta">Orta</option>
+						    <option name="konusma_seviye" value="ileri">İleri</option>
+						</select>
+						</div>    
+						</td>
+					</tr>
+                    <tr id='addr1'></tr>
+				</tbody>
+			</table>
+			<a id="add_row_pro" class="btn btn-default pull-left">Satır Ekle</a><a id='delete_row_pro' class="pull-right btn btn-default">Satır Sil</a>
+			</section>
+	    </div>
+	    <div class="tab-pane" id="tab7">
+	    
+	    <label for="ad">Bilgisayar Bilgileriniz (Maddeler halinde yazmak için cümle sonlarında enter a basınız.)</label>
+	    <br>
+	    <br>
+			<section style="height:518px">
+			<div class="form-group">
+        	<label for="isletim">Bildiğiniz İşletim Sistemleri: </label>
+        	<br>
+          	<input class="form-control" type="text" name="isletim" id="isletim" data-role="tagsinput" />
+        	</div>
+        
+        <div class="form-group">
+            <label for="programlama_dilleri">Bildiğiniz Programlama Dilleri :</label>
+        	<br>
+          	<input class="form-control" type="text" name="progralama_dili" id="progralama_dili" data-role="tagsinput" />
+        </div>
+        
+        <div class="form-group">
+            <label for="diger">Bildiğiniz Diğer :</label>
+        	<br>
+          	<input class="form-control" type="text" name="diger" id="diger" data-role="tagsinput" />
+        </div>
+		</section>
+		</div>
+		<div class="tab-pane" id="tab8">
+	    	<section>
+	    	</section>
 	    </div>
 		<ul class="pager wizard">
 			<li class="previous first" style="display:none;"><a href="#">İlk</a></li>
 			<li class="previous"><a href="#">Geri</a></li>
 			<li class="next last" style="display:none;"><a href="#">Son</a></li>
 		  	<li class="next"><a href="#">İleri</a></li>
+		  	<li class="next finish" style="display:none;"><a href="javascript:;">Özgeçmişi Kaydet</a></li> 
 		</ul>
 	</div>	
 </div>
