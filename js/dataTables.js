@@ -29,7 +29,6 @@ var a=1;
              		 a--;
              		 }
              	 });
-
 					/*eğitim tablo*/
                   var i2=1;
                   $("#add_row_egitim").click(function(){
@@ -56,8 +55,6 @@ var a=1;
              		 i2--;
              		 }
              	 });
-                  
-                  
                   /*yabancı dil*/
                   var c=1;
                   $("#add_row_dil").click(function(){
@@ -81,8 +78,6 @@ var a=1;
 							    	"<option name='konusma_seviye"+c+"' value='ileri'>İleri</option>"+
 							    	"</select></td>"
                            );
-
-                   
                    c++; 
                });
                   $("#delete_row_dil").click(function(){

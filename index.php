@@ -28,12 +28,8 @@
         <script src="js/bootstrap-datepicker.min.js"></script>
         <script src="locales/bootstrap-datepicker.tr.min.js"></script>
         
-        
-
-    
     <link rel="stylesheet" href="dist/bootstrap-tagsinput.css">
 
-    
     <script src="js/bootstrap-tagsinput.js"></script>
     <script src="js/jquery.bootstrap.wizard.js"></script>
     <script src="js/jquery.tabletojson.js"></script>
@@ -288,9 +284,6 @@
 
               	function cvWrite(){
               		
-
-              		
-              		
               		$("#f_profesyonel_deneyim").empty();
               		$("#f_kariyer_deneyim").empty();
               		$("#f_egitim").empty();
@@ -298,17 +291,30 @@
               		$("#f_bilgisayar").empty();
               		//$("#f_kisisel").empty();
               		/*Kişisel bilgiler*/
-              		$("#f_adi").text($("#ad").val()+" "+$("#soyad").val());
-              		$("#f_email").text($("#eposta").val());
-              		$("#f_telefon").text($("#telefon").val());
-              		$("#f_dTarih").text($("#dogumTarihi").val());
-              		$("#f_medeni").text($("input[name='medeni']:checked").val());
-              		$("#f_askerlik").text($("input[name='askerlik']:checked").val());
+              		
+              		var adi=$("#ad").val();
+              		var soyadi=$("#soyad").val();
+              		var email=$("#eposta").val();
+              		var telefon=$("#telefon").val();
+                  	var dogumTarih=$("#dogumTarihi").val();
+                  	var medeni=$("input[name='medeni']:checked").val();
+					var askerlik=$("input[name='askerlik']:checked").val();
+					var kariyerProfili=$("#kariyer").val();
+					var kariyerDeneyim=[];
+					var profesyonelDeneyim;
+
+                  	
+              		$("#f_adi").text(adi+" "+soyadi);
+              		$("#f_email").text(email);
+              		$("#f_telefon").text(telefon);
+              		$("#f_dTarih").text(dogumTarih);
+              		$("#f_medeni").text(medeni);
+              		$("#f_askerlik").text(askerlik);
               		
               		/*kariyer profili*/
-              		$("#f_kariyer").text($("#kariyer").val());
+              		$("#f_kariyer").text(kariyerProfili);
 
-              		var kariyerDeneyim=$("#kariyer_deneyim").val().split(',');
+              		kariyerDeneyim=$("#kariyer_deneyim").val().split(',');
 
               		for(i=0;i<kariyerDeneyim.length;i++)
               		{
@@ -326,10 +332,12 @@
               		
               		for(i=0;i<values.length;i++)
               			{
-              				if(values[i][0]!=""&&values[i][0]!=undefined)
+              				if(values[i][0]!=""&&values[i][0]!=undefined){
               				$("#f_profesyonel_deneyim").append("<span><b>"+values[i][0]+"</b></span>,<span>"+values[i][1]+"</span>,<span>"+values[i][2]+"</span><br/>"+
               					"<b>"+values[i][5]+"</b>,"+values[i][3]+","+values[i][4]+"<br/>");
-          					
+              				}else{
+								return false;
+                  			}
               				if(values[i][6]!=""&&values[i][6]!=undefined)
               				{
               					
@@ -342,6 +350,16 @@
 	                          	}
 									
                       		}
+                      		
+              				profesyonelDeneyim={
+                              		"firmaBilgisi":values[i][0],
+                              		"sehir":values[i][1],
+                      				"ulke":values[i][2],
+                      				"pozisyon":values[i][3],
+                      				"baslangic_tarihi":values[i][4],
+                      				"ayrilma_tarihi":values[i][5],
+                      				"aciklamalar":values[i][6]
+                          };
 
                      }
 
@@ -403,7 +421,7 @@
                 });
             </script>
             <style type="text/css" media="print">
-   .no-print { display: none; }
+   .no-print { display: none !important; }
 </style>
             <br>
  <div class="page-header no-print">
@@ -829,7 +847,7 @@
 	    </div>
 		<ul class="pager wizard">
 			<li class="previous first" style="display:none;"><a href="#">İlk</a></li>
-			<li class="no-print previous"><a href="#" class="no-print" >Geri</a></li>
+			<li class="previous no-print "><a href="#" class="no-print" >Geri</a></li>
 			<li class="next last" style="display:none;"><a href="#">Son</a></li>
 		  	<li class="next"><a href="#">İleri</a></li>
 		  	<li class="next finish no-print"><input class="no-print" type="button" value="Kaydet" /></li>
