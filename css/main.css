@@ -315,3 +315,17 @@ textarea {
 	color:red;
 	    font-size: 11px;
 }
+
+#cv_result{
+	
+	padding:20px;
+}
+
+hr{
+	
+	border-top: 1px solid #000 !important;
+	margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+
