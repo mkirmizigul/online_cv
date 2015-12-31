@@ -39,7 +39,7 @@ $(".js-ajax-php-json").submit(function(){
 var data = {
 "action": "test"
 };
-data = $(this).serialize() + "&" + $.param(data);
+data = $.param(data);
 $.ajax({
 type: "POST",
 dataType: "json",

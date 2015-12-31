@@ -60,7 +60,7 @@ return false;
              $(function ()
                {
 
-            	 $(".js-ajax-php-json").submit(function(){
+            	 /*$(".js-ajax-php-json").submit(function(){
             		 var data = {
             		 "action": "test"
             		 };
@@ -79,27 +79,24 @@ return false;
             		 }
             		 });
             		 return false;
-            		 });
+            		 });*/
 
 				var dataAll;
 
 				$(".js-ajax-php-json").submit(function(){
-              		var data = {
-              		"action": "test"
-              		};
-
+              		
               		var jsonString = JSON.stringify(dataAll);
               		
-              		data = $.param(data);
+              		//data = $.param(data);
               		
               		$.ajax({
               		type: "POST",
+              		cache:false,
+              		url: "kaydet.php", //Relative or absolute path to response.php file
+              		data: {"data":jsonString},
               		dataType: "json",
-              		url: "response.php", //Relative or absolute path to response.php file
-              		data: dataAll,
-              		//contentType: "application/json; charset=utf-8",
               		success: function(data) {
-              		alert("Form submitted successfully.\nReturned json: " + data["json"]);
+              		alert("Form submitted successfully.\nReturned json: " + data);
               		}
               		});
               		return false;
@@ -982,7 +979,7 @@ function test_function(){
 	    	
 	    	</section>
 	    </div>
-	    <input type="submit" name="submit" value="Submit form" />
+	    
 		<ul class="pager wizard">
 			<li class="previous first" style="display:none;"><a href="#">İlk</a></li>
 			<li class="previous no-print "><a href="#" class="no-print" >Geri</a></li>
