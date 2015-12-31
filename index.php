@@ -33,13 +33,80 @@
     <script src="js/bootstrap-tagsinput.js"></script>
     <script src="js/jquery.bootstrap.wizard.js"></script>
     <script src="js/jquery.tabletojson.js"></script>
-    
-</head>
-
-<body>
-         <script>
+        <script type="text/javascript">
+/*$("document").ready(function(){
+$(".js-ajax-php-json").submit(function(){
+var data = {
+"action": "test"
+};
+data = $(this).serialize() + "&" + $.param(data);
+$.ajax({
+type: "POST",
+dataType: "json",
+url: "response.php", //Relative or absolute path to response.php file
+data: data,
+success: function(data) {
+$(".the-return").html(
+"Favorite beverage: " + data["favorite_beverage"] + "<br />Favorite restaurant: " + data["favorite_restaurant"] + "<br />Gender: " + data["gender"] + "<br />JSON: " + data["json"]
+);
+alert("Form submitted successfully.\nReturned json: " + data["json"]);
+}
+});
+return false;
+});
+});*/
+</script>
+       <script>
              $(function ()
-               {var $validator = $("#commentForm").validate({
+               {
+
+            	 $(".js-ajax-php-json").submit(function(){
+            		 var data = {
+            		 "action": "test"
+            		 };
+            		 data = $(this).serialize() + "&" + $.param(data);
+            		 $.ajax({
+            		 type: "POST",
+            		 dataType: "json",
+            		 url: "response.php", //Relative or absolute path to response.php file
+            		 data: data,
+            		 //contentType: "application/json; charset=utf-8",
+            		 success: function(data) {
+            		 $(".the-return").html(
+            		 "Favorite beverage: " + data["favorite_beverage"] + "<br />Favorite restaurant: " + data["favorite_restaurant"] + "<br />Gender: " + data["gender"] + "<br />JSON: " + data["json"]
+            		 );
+            		 alert("Form submitted successfully.\nReturned json: " + data["json"]);
+            		 }
+            		 });
+            		 return false;
+            		 });
+
+				var dataAll;
+
+				$(".js-ajax-php-json").submit(function(){
+              		var data = {
+              		"action": "test"
+              		};
+
+              		var jsonString = JSON.stringify(dataAll);
+              		
+              		data = $.param(data);
+              		
+              		$.ajax({
+              		type: "POST",
+              		dataType: "json",
+              		url: "response.php", //Relative or absolute path to response.php file
+              		data: dataAll,
+              		//contentType: "application/json; charset=utf-8",
+              		success: function(data) {
+              		alert("Form submitted successfully.\nReturned json: " + data["json"]);
+              		}
+              		});
+              		return false;
+              		});
+				
+
+                 var $validator = $("#commentForm").validate({
                 		rules: {
             				ad: {
             					required: true
@@ -180,35 +247,9 @@
               	  $("a[href*='tab8']").click(function(){
 
 
-              		cvWrite();
-					//$('form[name=commentForm]').submit();
+              		dataAll=cvWrite();
 
-							 /*$.ajax({
-							  type: 'POST',
-							  async: true,
-							  datatype:'json',
-							  url: "index.php",
-							  data: $("#commentForm").serialize(),
-							  success: function(data, status, xhr){
-							    //alert('ok');
-							  },
-							  error: function(xhr, status, err) {
-							    alert(status + ": " + err);
-							  }
-							 });*/
-              		  
-					/*alert('test');
-              		  
-              		$.ajax({
-              		    type: 'POST', 
-              		    url:'index.php',
-              		  	dataType: 'json',
-              		    data: $('#commentForm').serialize(), 
-              		    success: function(data) {
-              		        $('#debug').html(data);
-              		  }
-              		});*/
-						
+											
               		  
                   	  
                  });
@@ -224,7 +265,7 @@
 
         		
               		
-              		cvWrite();
+              		dataAll=cvWrite();
       
               		
        
@@ -292,6 +333,7 @@
               		//$("#f_kisisel").empty();
               		/*Kişisel bilgiler*/
               		
+              		
               		var adi=$("#ad").val();
               		var soyadi=$("#soyad").val();
               		var email=$("#eposta").val();
@@ -301,7 +343,13 @@
 					var askerlik=$("input[name='askerlik']:checked").val();
 					var kariyerProfili=$("#kariyer").val();
 					var kariyerDeneyim=[];
-					var profesyonelDeneyim;
+					var profesyonelDeneyim=null;
+					var egitim=null;
+					var kurs=$("#kursadi0").val();
+					var dil=null;
+					var isletim_sistemleri=$("#isletim").val();
+					var programlama_dilleri=$("#programlama_dili").val();
+					var diger=$("#diger").val();
 
                   	
               		$("#f_adi").text(adi+" "+soyadi);
@@ -336,7 +384,7 @@
               				$("#f_profesyonel_deneyim").append("<span><b>"+values[i][0]+"</b></span>,<span>"+values[i][1]+"</span>,<span>"+values[i][2]+"</span><br/>"+
               					"<b>"+values[i][5]+"</b>,"+values[i][3]+","+values[i][4]+"<br/>");
               				}else{
-								return false;
+								continue;
                   			}
               				if(values[i][6]!=""&&values[i][6]!=undefined)
               				{
@@ -345,7 +393,7 @@
 
 								for(k=0;k<proDetail.length;k++){
 
-	                      			$("#f_profesyonel_deneyim").append("<ul><li>olur olur</li></ul>");		
+	                      			$("#f_profesyonel_deneyim").append("<ul><li>"+proDetail[k]+"</li></ul>");		
 
 	                          	}
 									
@@ -355,9 +403,9 @@
                               		"firmaBilgisi":values[i][0],
                               		"sehir":values[i][1],
                       				"ulke":values[i][2],
-                      				"pozisyon":values[i][3],
-                      				"baslangic_tarihi":values[i][4],
-                      				"ayrilma_tarihi":values[i][5],
+                      				"pozisyon":values[i][5],
+                      				"baslangic_tarihi":values[i][3],
+                      				"ayrilma_tarihi":values[i][4],
                       				"aciklamalar":values[i][6]
                           };
 
@@ -380,12 +428,22 @@
               				
           				$("#f_egitim").append("<span><b>"+vars1+"</b></span><br/>"+
           					"<span>"+vars2+"</span>");
+
+          				egitim={
+							"okul_adi":values[i][0],
+							"fakulte_adi":values[i][1],
+							"bolum_adi":values[i][2],
+							"sehir":values[i][3],
+							"ilce":values[i][4],
+							"mezuniyet_tarihi":values[i][5]
+                        };
+                  		
           				}
                  	}
                     /*kurslar*/
-              		var kurslar=$("#kursadi0").val();
+              		
 
-              		$("#f_egitim").append("<span>Kurslar : "+kurslar+"</span>");
+              		$("#f_egitim").append("<span>Kurslar : "+kurs+"</span>");
 
               		/*yabancı dil*/
 
@@ -403,38 +461,117 @@
           					var vars=values[i][0]+", <b>Okuma: </b>"+values[i][1]+", <b>Yazma: </b>"+values[i][2]+", <b>Konuşma: </b>"+values[i][3]+"<br/>";
 
           				$("#f_dil").append(vars);
+
+							dil={
+								"dil":values[i][0],
+								"duzey":values[i][1]+","+values[i][2]+","+values[i][3]
+								};
+          				
           				}
                  	}
-              		
-              		
-              		
+
               		/*bilgisayar bilgisi*/
               		if($("#isletim").val()!=""&&$("#isletim").val()!=undefined){
               		$("#f_bilgisayar").append("<b>İşletim Sistemleri :</b> "+$("#isletim").val()+"<br/>");
               		$("#f_bilgisayar").append("<b>Programlama Dilleri :</b> "+$("#programlama_dili").val()+"<br/>");
               		$("#f_bilgisayar").append("<b>Diğer :</b> "+$("#diger").val());
               		}
-                 	
+
+              		var data={
+    						"adi":adi,
+    						"soyadi":soyadi,
+    						"profesyonelDeneyim":profesyonelDeneyim,
+    						"egitim":egitim,
+    						"kurs":kurs,
+    						"dil":dil,
+    						"isletim_sistemleri":isletim_sistemleri,
+    						"programlama_dilleri":programlama_dilleri,
+    						"diger":diger
+    						
+    					};
+                 	return data;
                  }
-    	  	
+
+              	function stopRKey(evt) { 
+              	  var evt = (evt) ? evt : ((event) ? event : null); 
+              	  var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null); 
+              	  if ((evt.keyCode == 13) && (node.type=="text"))  {return false;} 
+              	} 
+
+              	document.onkeypress = stopRKey;
+
+              	
+              	
+
+        	  	/*$("#kaydet").click(function(){
+
+        	  		
+            	  	
+        	  		$.ajax({
+						  type: 'post',
+						  url: "index.php",
+						  data: jsonString,
+						  
+						  success: function(data, status, xhr){
+
+								var gr=data;
+							    
+						  },
+						  error: function(xhr, status, err) {
+						    alert(status + ": " + err);
+						  }
+						 });
+
+            	 });*/
 					            	
                 });
             </script>
             <style type="text/css" media="print">
    .no-print { display: none !important; }
 </style>
+
+    
+</head>
+
+<body>
+<?php
+
+function is_ajax() {
+	return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+}
+
+if (is_ajax()) {
+	/*if (isset($_POST["action"]) && !empty($_POST["action"])) { //Checks if action value exists
+		$action = $_POST["action"];
+		switch($action) { //Switch case for value of action
+			case "test": test_function(); break;
+		}
+	}*/
+
+$return = $_POST;
+
+$return["json"] = json_encode($return);
+echo json_encode($return);
+
+}
+
+function test_function(){
+	$return = $_POST;
+
+	$return["json"] = json_encode($return);
+	echo json_encode($return);
+}
+
+
+
+?>
             <br>
  <div class="page-header no-print">
   <h1 >Online Özgeçmiş  <small>Uygulaması</small></h1>
 </div>
-      
-<?php 
 
-//var_dump($_POST['ad']);
-
-?>
-
-<form id="commentForm" method="post" name="commentForm" action="<?php $PHP_SELF ?>" class="form-horizontal">
+<!-- <form id="commentForm" method="post" action="<?php $PHP_SELF ?>" name="commentForm" class="form-horizontal" accept-charset="utf-8"> -->
+<form id="commentForm" action="return.php" class="js-ajax-php-json" method="post" accept-charset="utf-8" name="commentForm">
 <div class="row col-lg-10">
 <div id="rootwizard">
 	<ul class="no-print">
@@ -734,25 +871,25 @@
 						
 						<td>
 						<select class="form-control">
-						    <option name="okuma_seviye" value="başlangıç">Başlangıç</option>
-						    <option name="okuma_seviye" value="orta">Orta</option>
-						    <option name="okuma_seviye" value="ileri">İleri</option>
+						    <option name="okuma_seviye" value="Başlangıç">Başlangıç</option>
+						    <option name="okuma_seviye" value="Orta">Orta</option>
+						    <option name="okuma_seviye" value="İleri">İleri</option>
 						</select>
 						</div>    
 						</td>
 						<td>
 						<select class="form-control">
-						    <option name="yazma_seviye" value="başlangıç">Başlangıç</option>
-						    <option name="yazma_seviye" value="orta">Orta</option>
-						    <option name="yazma_seviye" value="ileri">İleri</option>
+						    <option name="yazma_seviye" value="Başlangıç">Başlangıç</option>
+						    <option name="yazma_seviye" value="Orta">Orta</option>
+						    <option name="yazma_seviye" value="İleri">İleri</option>
 						</select>
 						</div>    
 						</td>
 						<td>
 						<select class="form-control">
-						    <option name="konusma_seviye" value="başlangıç">Başlangıç</option>
-						    <option name="konusma_seviye" value="orta">Orta</option>
-						    <option name="konusma_seviye" value="ileri">İleri</option>
+						    <option name="konusma_seviye" value="Başlangıç">Başlangıç</option>
+						    <option name="konusma_seviye" value="Orta">Orta</option>
+						    <option name="konusma_seviye" value="İleri">İleri</option>
 						</select>
 						</div>    
 						</td>
@@ -845,12 +982,13 @@
 	    	
 	    	</section>
 	    </div>
+	    <input type="submit" name="submit" value="Submit form" />
 		<ul class="pager wizard">
 			<li class="previous first" style="display:none;"><a href="#">İlk</a></li>
 			<li class="previous no-print "><a href="#" class="no-print" >Geri</a></li>
 			<li class="next last" style="display:none;"><a href="#">Son</a></li>
 		  	<li class="next"><a href="#">İleri</a></li>
-		  	<li class="next finish no-print"><input class="no-print" type="button" value="Kaydet" /></li>
+		  	<li class="next finish no-print"><input class="no-print" id="kaydet" name="submit" type="submit" value="Kaydet" /></li>
 		  	<li class="finish"><input id="print" class="no-print" type="button" value="Yazdır" /></li>
 		  	 
 		</ul>
