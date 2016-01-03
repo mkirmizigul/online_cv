@@ -33,53 +33,10 @@
     <script src="js/bootstrap-tagsinput.js"></script>
     <script src="js/jquery.bootstrap.wizard.js"></script>
     <script src="js/jquery.tabletojson.js"></script>
-        <script type="text/javascript">
-/*$("document").ready(function(){
-$(".js-ajax-php-json").submit(function(){
-var data = {
-"action": "test"
-};
-data = $(this).serialize() + "&" + $.param(data);
-$.ajax({
-type: "POST",
-dataType: "json",
-url: "response.php", //Relative or absolute path to response.php file
-data: data,
-success: function(data) {
-$(".the-return").html(
-"Favorite beverage: " + data["favorite_beverage"] + "<br />Favorite restaurant: " + data["favorite_restaurant"] + "<br />Gender: " + data["gender"] + "<br />JSON: " + data["json"]
-);
-alert("Form submitted successfully.\nReturned json: " + data["json"]);
-}
-});
-return false;
-});
-});*/
-</script>
        <script>
              $(function ()
                {
 
-            	 /*$(".js-ajax-php-json").submit(function(){
-            		 var data = {
-            		 "action": "test"
-            		 };
-            		 data = $(this).serialize() + "&" + $.param(data);
-            		 $.ajax({
-            		 type: "POST",
-            		 dataType: "json",
-            		 url: "response.php", //Relative or absolute path to response.php file
-            		 data: data,
-            		 //contentType: "application/json; charset=utf-8",
-            		 success: function(data) {
-            		 $(".the-return").html(
-            		 "Favorite beverage: " + data["favorite_beverage"] + "<br />Favorite restaurant: " + data["favorite_restaurant"] + "<br />Gender: " + data["gender"] + "<br />JSON: " + data["json"]
-            		 );
-            		 alert("Form submitted successfully.\nReturned json: " + data["json"]);
-            		 }
-            		 });
-            		 return false;
-            		 });*/
 
 				var dataAll;
 
@@ -97,7 +54,11 @@ return false;
               		dataType: "json",
               		success: function(data) {
               		alert("Form submitted successfully.\nReturned json: " + data);
-              		}
+              		},
+              		error: function (xhr, ajaxOptions, thrownError) {
+              	        alert(xhr.status);
+              	        alert(thrownError);
+              	      }
               		});
               		return false;
               		});
@@ -340,10 +301,10 @@ return false;
 					var askerlik=$("input[name='askerlik']:checked").val();
 					var kariyerProfili=$("#kariyer").val();
 					var kariyerDeneyim=[];
-					var profesyonelDeneyim=[];
-					var egitim=null;
+					var profesyonelDeneyim=new Array();
+					var egitim=new Array();
 					var kurs=$("#kursadi0").val();
-					var dil=null;
+					var dil=new Array();
 					var isletim_sistemleri=$("#isletim").val();
 					var programlama_dilleri=$("#programlama_dili").val();
 					var diger=$("#diger").val();
@@ -396,7 +357,7 @@ return false;
 									
                       		}
                       		
-              				profesyonelDeneyim.push={
+              				profesyonelDeneyim.push({
                               		"firmaBilgisi":values[i][0],
                               		"sehir":values[i][1],
                       				"ulke":values[i][2],
@@ -404,7 +365,7 @@ return false;
                       				"baslangic_tarihi":values[i][3],
                       				"ayrilma_tarihi":values[i][4],
                       				"aciklamalar":values[i][6]
-                          };
+              				});
 
                      }
 
@@ -477,6 +438,12 @@ return false;
               		var data={
     						"adi":adi,
     						"soyadi":soyadi,
+    						"email":email,
+    						"dogumTarih":dogumTarih,
+    						"telefon":telefon,
+    						"askerlik":askerlik,
+    						"medeni":medeni,
+    						"kariyerProfili":kariyerProfili,
     						"profesyonelDeneyim":profesyonelDeneyim,
     						"egitim":egitim,
     						"kurs":kurs,
@@ -496,30 +463,6 @@ return false;
               	} 
 
               	document.onkeypress = stopRKey;
-
-              	
-              	
-
-        	  	/*$("#kaydet").click(function(){
-
-        	  		
-            	  	
-        	  		$.ajax({
-						  type: 'post',
-						  url: "index.php",
-						  data: jsonString,
-						  
-						  success: function(data, status, xhr){
-
-								var gr=data;
-							    
-						  },
-						  error: function(xhr, status, err) {
-						    alert(status + ": " + err);
-						  }
-						 });
-
-            	 });*/
 					            	
                 });
             </script>

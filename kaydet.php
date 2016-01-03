@@ -1,6 +1,11 @@
 
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+include 'DB.php';
+
 if (is_ajax()) {
 	
 	test_function();
@@ -19,13 +24,82 @@ return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_R
 }
 function test_function(){
 
-//Do what you need to do with the info. The following are some examples.
-//if ($return["favorite_beverage"] == ""){
-// $return["favorite_beverage"] = "Coke";
-//}
-//$return["favorite_restaurant"] = "McDonald's";
-header('Content-type: application/json');
+	
+	$json_array=json_decode($_POST['data'],true);
+	
+	$adi=$json_array['adi'];
+	
+	$soyadi=$json_array['soyadi'];
+	
+	$eposta=$json_array['email'];
+	
+	$dogum=$json_array['dogumTarih'];
+	
+	$telefon=$json_array['telefon'];
+	
+	$askerlik=$json_array['askerlik'];
+	
+	$medeni=$json_array['medeni'];
+	
+	$pro=$json_array['profesyonelDeneyim'];
+	
+	$kariyer=$json_array['kariyerProfili'];
+	
+	
+	
+	$conn=connection();
 
-echo json_encode($_POST['data']);
+	$sql = "INSERT INTO kisisel_bilgiler(ad,soyad,askerlik_hizmeti,dogum_tarihi,e_posta,medeni_durum,kariyer_profili,telefon)";
+	$sql .=" VALUES (:ad,:soyad,:askerlik_hizmeti,:dogum_tarihi,:e_posta,:medeni_durum,:kariyer_profili,:telefon)";
+	
+	$query = $conn->prepare($sql);
+	$sonuc = $query->execute(array(
+			":ad"=>$adi,
+			":soyad"=>$soyadi,
+			":askerlik_hizmeti"=>$askerlik,
+			":dogum_tarihi"=>date('Y.m.d',strtotime($dogum)),
+			":e_posta"=>$eposta,
+			":medeni_durum"=>$medeni,
+			":kariyer_profili"=>$kariyer,
+			":telefon"=>$telefon
+	));
+	$last_id=$conn->lastInsertId();
+	$conn=null;
+	
+	$conn=connection();
+	
+	$sqlPro = "INSERT INTO profesyonel_deneyim(firma_bilgisi,baslangic_tarihi,ayrilma_tarihi,pozisyon,sehir,ulke,aciklamalar,id_kisisel_bilgiler)";
+	$sqlPro .=" VALUES (:firma_bilgisi,:baslangic_tarihi,:ayrilma_tarihi,:pozisyon,:sehir,:ulke,:aciklamalar,:id_kisisel_bilgiler)";
+	
+	
+	$query = $conn->prepare($sqlPro);
+	
+	
+		foreach ($pro as $value) {
+			$firma_bilgisi=$value['firmaBilgisi'];
+			$baslangic_tarihi=$value['baslangic_tarihi'];
+			$ayrilma_tarihi=$value['ayrilma_tarihi'];
+			$pozisyon=$value['pozisyon'];
+			$sehir=$value['sehir'];
+			$ulke=$value['ulke'];
+			$aciklamalar=$value['aciklamalar'];
+			
+			$sonuc = $query->execute(array(
+					":firma_bilgisi"=>$firma_bilgisi,
+					":baslangic_tarihi"=>date('Y.m.d',strtotime($baslangic_tarihi)),
+					":ayrilma_tarihi"=>date('Y.m.d',strtotime($ayrilma_tarihi)),
+					":pozisyon"=>$pozisyon,
+					":sehir"=>$sehir,
+					":ulke"=>$ulke,
+					":aciklamalar"=>$aciklamalar,
+					":id_kisisel_bilgiler"=>$last_id
+			));
+		}
+
+	
+	//header('Content-type: application/json');
+	
+	var_dump($conn->lastInsertId());
+
 }
 ?>
