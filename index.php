@@ -340,7 +340,7 @@ return false;
 					var askerlik=$("input[name='askerlik']:checked").val();
 					var kariyerProfili=$("#kariyer").val();
 					var kariyerDeneyim=[];
-					var profesyonelDeneyim=null;
+					var profesyonelDeneyim=[];
 					var egitim=null;
 					var kurs=$("#kursadi0").val();
 					var dil=null;
@@ -396,7 +396,7 @@ return false;
 									
                       		}
                       		
-              				profesyonelDeneyim={
+              				profesyonelDeneyim.push={
                               		"firmaBilgisi":values[i][0],
                               		"sehir":values[i][1],
                       				"ulke":values[i][2],
