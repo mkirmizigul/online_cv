@@ -502,18 +502,60 @@ function test_function(){
 	echo json_encode($return);
 }
 
-
+if(isset($_POST['cv'])) echo $_POST['cv'];
 
 ?>
             <br>
+            
+       
+            
  <div class="page-header no-print">
   <h1 >Online Özgeçmiş  <small>Uygulaması</small></h1>
+  
 </div>
 
 <!-- <form id="commentForm" method="post" action="<?php $PHP_SELF ?>" name="commentForm" class="form-horizontal" accept-charset="utf-8"> -->
-<form id="commentForm" action="return.php" class="js-ajax-php-json" method="post" accept-charset="utf-8" name="commentForm">
+
+<form id="commentForm" action="<?php echo $_SERVER['PHP_SELF'];?>" class="js-ajax-php-json" method="post" accept-charset="utf-8" name="commentForm">
+
+
+
+
 <div class="row col-lg-10">
+
 <div id="rootwizard">
+<div>
+<input class="btn btn-danger" type="reset" value="Yeni CV Oluştur">
+</div>
+<div style="float:left">
+	<span>Özgeçmiş Seçin</span>
+	<select name="cv" id="mySelect" onchange='this.form.submit()' class="form-control input-sm" style="width: 200px">
+
+
+	<?php 
+	
+	error_reporting(E_ALL);
+	ini_set('display_errors', '1');
+	
+	include 'DB.php';
+	
+	$conn=connection();
+	$sql="select ad,soyad from kisisel_bilgiler";
+	
+	
+    
+	
+	?>
+	<option value="">CV Seç2</option>
+	<option value="">CV Seç</option>
+    <?php foreach ($conn->query($sql) as $row):?>
+    <option value=""><?php echo $row['ad']." ".$row['soyad'];?></option>
+    <?php endforeach;?>
+    </select>
+    <noscript><input type="submit" value="Submit"></noscript>
+</div>
+<br>
+</select>
 	<ul class="no-print">
 	  	<li><a href="#tab1" data-toggle="tab">Kişisel Bilgileriniz</a></li>
 		<li><a href="#tab2" data-toggle="tab">Kariyer Profili</a></li>
@@ -524,6 +566,8 @@ function test_function(){
 		<li><a href="#tab7" data-toggle="tab">Bilgisayar Bilgisi</a></li>
 		<li><a href="#tab8" data-toggle="tab">Özgeçmiş Görüntüle</a></li>
 	</ul>
+	
+	
 	
 	<div class="tab-content">
 	    <div class="tab-pane" id="tab1">
