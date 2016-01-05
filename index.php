@@ -34,10 +34,21 @@
     <script src="js/jquery.bootstrap.wizard.js"></script>
     <script src="js/jquery.tabletojson.js"></script>
        <script>
+
+       function myFunction() {
+    	   //document.getElementById("commentForm").submit();
+    	   
+    	   //HTMLFormElement.prototype.submit.call($('#cv_sec')[0]);
+    	   document.forms["cv_sec"].submit();
+		}
+
+       
+       
              $(function ()
                {
 
-
+            	 
+                 
 				var dataAll;
 
 				$(".js-ajax-php-json").submit(function(){
@@ -463,6 +474,10 @@
               	} 
 
               	document.onkeypress = stopRKey;
+
+              	function SubFunc(){
+                  	document.forms["commentForm"].submit();
+    			};
 					            	
                 });
             </script>
@@ -502,34 +517,21 @@ function test_function(){
 	echo json_encode($return);
 }
 
-if(isset($_POST['cv'])) echo $_POST['cv'];
+var_dump($_POST['cv']);
 
 ?>
-            <br>
-            
-       
-            
+<br>
+
  <div class="page-header no-print">
   <h1 >Online Özgeçmiş  <small>Uygulaması</small></h1>
   
 </div>
 
 <!-- <form id="commentForm" method="post" action="<?php $PHP_SELF ?>" name="commentForm" class="form-horizontal" accept-charset="utf-8"> -->
-
-<form id="commentForm" action="<?php echo $_SERVER['PHP_SELF'];?>" class="js-ajax-php-json" method="post" accept-charset="utf-8" name="commentForm">
-
-
-
-
-<div class="row col-lg-10">
-
-<div id="rootwizard">
-<div>
-<input class="btn btn-danger" type="reset" value="Yeni CV Oluştur">
-</div>
-<div style="float:left">
+<form id="cv_sec" name="cv_sec" action="<?php $_PHP_SELF ?>" class="js-ajax-php-json" method="post" accept-charset="utf-8" style="z-index:999" >
+<div style="float: right;position:absolute;right:400px;top:50px;">
 	<span>Özgeçmiş Seçin</span>
-	<select name="cv" id="mySelect" onchange='this.form.submit()' class="form-control input-sm" style="width: 200px">
+	<select name="cv" id="mySelect" onchange="myFunction()" class="form-control input-sm" style="width: 200px">
 
 
 	<?php 
@@ -538,21 +540,34 @@ if(isset($_POST['cv'])) echo $_POST['cv'];
 	ini_set('display_errors', '1');
 	
 	include 'DB.php';
-	
+		
 	$conn=connection();
-	$sql="select ad,soyad from kisisel_bilgiler";
 	
-	
-    
-	
+	$sql="select ad,soyad,e_posta from kisisel_bilgiler";
+
 	?>
-	<option value="">CV Seç2</option>
+	
 	<option value="">CV Seç</option>
     <?php foreach ($conn->query($sql) as $row):?>
-    <option value=""><?php echo $row['ad']." ".$row['soyad'];?></option>
+    <option value="<?php echo $row['e_posta'];?>"><?php echo $row['ad']." ".$row['soyad'];?></option>
     <?php endforeach;?>
     </select>
-    <noscript><input type="submit" value="Submit"></noscript>
+    
+    
+</div>
+
+</form>
+
+
+
+
+
+<div class="row col-lg-10">
+
+<div id="rootwizard" >
+<form id="commentForm" action="<?php $_PHP_SELF ?>" class="js-ajax-php-json" method="post" accept-charset="utf-8" name="commentForm">
+<div>
+<input class="btn btn-danger"   type="reset" value="Yeni CV Oluştur">
 </div>
 <br>
 </select>
