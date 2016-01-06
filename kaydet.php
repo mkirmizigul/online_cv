@@ -47,7 +47,21 @@ function test_function(){
 	
 	$kariyer=$json_array['kariyerProfili'];
 	
+	$kariyerDen=$json_array['kariyerDen'];
 	
+	$isletim_sistemleri=$json_array['isletim_sistemleri'];
+	
+	$programlama_dilleri=$json_array['programlama_dilleri'];
+	
+	$diger=$json_array['diger'];
+	
+	$egitim=$json_array['egitim'];
+	
+	$kurs=$json_array['kurs'];
+	
+	$dil=$json_array['dil'];
+	
+	/*kişisel bilgiler*/
 	
 	$conn=connection();
 
@@ -65,7 +79,13 @@ function test_function(){
 			":kariyer_profili"=>$kariyer,
 			":telefon"=>$telefon
 	));
+	
+	/*kişisel bilgiler*/
+	
 	$last_id=$conn->lastInsertId();
+	
+	/*profesyonel deneyim*/
+	
 	$conn=null;
 	
 	$conn=connection();
@@ -97,11 +117,133 @@ function test_function(){
 					":id_kisisel_bilgiler"=>$last_id
 			));
 		}
+		
+		/*profesyonel deneyim*/
+		
+		$conn=null;
+		
+		/*kariyer_profili*/
+		
+		$conn=connection();
+		
+		$sqlKariyer = "INSERT INTO kariyer_profil(id_kisisel_bilgiler,kariyer_bilgileri)";
+		$sqlKariyer .=" VALUES (:id_kisisel_bilgiler,:kariyer_bilgileri)";
+		
+		
+		$query = $conn->prepare($sqlKariyer);
 
+			$sonuc = $query->execute(array(
+					":id_kisisel_bilgiler"=>$last_id,
+					":kariyer_bilgileri"=>$kariyerDen
+			));
+		
+		/*kariyer_profili*/
+			
+		$conn=null;
+			
+		/*bilgisayar bilgileri*/
+		
+		$conn=connection();
+			
+		$sqlBilgisayar = "INSERT INTO bilgisayar_bilgisi(isletim_sistemleri,programlama_dilleri,id_kisisel_bilgiler)";
+		$sqlBilgisayar .=" VALUES (:isletim_sistemleri,:programlama_dilleri,:id_kisisel_bilgiler)";
+			
+			
+		$query = $conn->prepare($sqlBilgisayar);
+		
+		$sonuc = $query->execute(array(
+					":isletim_sistemleri"=>$isletim_sistemleri,
+					":programlama_dilleri"=>$programlama_dilleri,
+					":id_kisisel_bilgiler"=>$last_id
+			));
+				
+		/*bilgisayar bilgileri*/
+		
+		$conn=null;
+		
+		/*egitim*/
+		
+		$conn=connection();
+		
+		$sqlEgitim = "INSERT INTO egitim(bolum_adi,fakulte_adi,ilce,mezuniyet_tarihi,okul_adi,sehir,id_kisisel_bilgiler)";
+		$sqlEgitim .=" VALUES (:bolum_adi,:fakulte_adi,:ilce,:mezuniyet_tarihi,:okul_adi,:sehir,:id_kisisel_bilgiler)";
+		
+		
+		$query = $conn->prepare($sqlEgitim);
+		
+		
+		foreach ($egitim as $value) {
+			$bolum_adi=$value['bolum_adi'];
+			$fakulte_adi=$value['fakulte_adi'];
+			$ilce=$value['ilce'];
+			$mezuniyet_tarihi=$value['mezuniyet_tarihi'];
+			$okul_adi=$value['okul_adi'];
+			$sehir=$value['sehir'];
+			
+				
+			$sonuc = $query->execute(array(
+					":bolum_adi"=>$bolum_adi,
+					":fakulte_adi"=>$fakulte_adi,
+					":ilce"=>$ilce,
+					":mezuniyet_tarihi"=>date('Y.m.d',strtotime($mezuniyet_tarihi)),
+					":okul_adi"=>$okul_adi,
+					":sehir"=>$sehir,
+					":sehir"=>$sehir,
+					":id_kisisel_bilgiler"=>$last_id
+			));
+		}
+		/*egitim*/
+		
+		
+		
+		$conn=null;
+		
+		/*kurs*/
+		
+		$conn=connection();
+			
+		$sqlKurs = "INSERT INTO kurs(aciklamalar,id_kisisel_bilgiler)";
+		$sqlKurs .=" VALUES (:aciklamalar,:id_kisisel_bilgiler)";
+
+		$aciklamalar=$kurs;
+			
+		$query = $conn->prepare($sqlKurs);
+		
+		$sonuc = $query->execute(array(
+				":aciklamalar"=>$aciklamalar,
+				":id_kisisel_bilgiler"=>$last_id
+		));
+		
+		/*kurs*/
+		
+		$conn=null;
+		
+		/*yabancı dil*/
+		
+		$conn=connection();
+			
+		$sqlYabanci = "INSERT INTO yabanci_dil(dil,duzey,id_kisisel_bilgiler)";
+		$sqlYabanci .=" VALUES (:dil,:duzey,:id_kisisel_bilgiler)";
+
+		
+		$query = $conn->prepare($sqlYabanci);
+		
+		foreach ($dil as $value) {
+			$dil=$value['dil'];
+			$duzey=$value['duzey'];
+			
+			
+				
+			$sonuc = $query->execute(array(
+					":dil"=>$dil,
+					":duzey"=>$duzey,
+					":id_kisisel_bilgiler"=>$last_id
+			));
+		}
 	
 	//header('Content-type: application/json');
 	
-	var_dump($conn->lastInsertId());
+	//var_dump($conn->lastInsertId());
 
 }
 ?>

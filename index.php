@@ -64,11 +64,11 @@
               		data: {"data":jsonString},
               		dataType: "json",
               		success: function(data) {
-              		alert("Form submitted successfully.\nReturned json: " + data);
+              		//alert("Form submitted successfully.\nReturned json: " + data);
               		},
               		error: function (xhr, ajaxOptions, thrownError) {
-              	        alert(xhr.status);
-              	        alert(thrownError);
+              	      //  alert(xhr.status);
+              	        //alert(thrownError);
               	      }
               		});
               		return false;
@@ -311,7 +311,7 @@
                   	var medeni=$("input[name='medeni']:checked").val();
 					var askerlik=$("input[name='askerlik']:checked").val();
 					var kariyerProfili=$("#kariyer").val();
-					var kariyerDeneyim=[];
+					var kariyerDen=$("#kariyer_deneyim").val();
 					var profesyonelDeneyim=new Array();
 					var egitim=new Array();
 					var kurs=$("#kursadi0").val();
@@ -398,21 +398,25 @@
           				$("#f_egitim").append("<span><b>"+vars1+"</b></span><br/>"+
           					"<span>"+vars2+"</span>");
 
-          				egitim={
+          				
+                  		
+          				}else{
+							continue;
+              			}
+
+          				egitim.push({
 							"okul_adi":values[i][0],
 							"fakulte_adi":values[i][1],
 							"bolum_adi":values[i][2],
 							"sehir":values[i][3],
 							"ilce":values[i][4],
 							"mezuniyet_tarihi":values[i][5]
-                        };
-                  		
-          				}
+                        });
                  	}
                     /*kurslar*/
               		
 
-              		$("#f_egitim").append("<span>Kurslar : "+kurs+"</span>");
+              		$("#f_egitim").append("<br/><span><b>Kurslar :</b> "+kurs+"</span>");
 
               		/*yabancı dil*/
 
@@ -431,12 +435,15 @@
 
           				$("#f_dil").append(vars);
 
-							dil={
-								"dil":values[i][0],
-								"duzey":values[i][1]+","+values[i][2]+","+values[i][3]
-								};
+							
           				
-          				}
+          				}else{
+							continue;
+              			}
+          				dil.push({
+							"dil":values[i][0],
+							"duzey":values[i][1]+","+values[i][2]+","+values[i][3]
+							});
                  	}
 
               		/*bilgisayar bilgisi*/
@@ -455,6 +462,7 @@
     						"askerlik":askerlik,
     						"medeni":medeni,
     						"kariyerProfili":kariyerProfili,
+    						"kariyerDen":kariyerDen,
     						"profesyonelDeneyim":profesyonelDeneyim,
     						"egitim":egitim,
     						"kurs":kurs,
@@ -489,38 +497,7 @@
 </head>
 
 <body>
-<?php
 
-function is_ajax() {
-	return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-}
-
-if (is_ajax()) {
-	/*if (isset($_POST["action"]) && !empty($_POST["action"])) { //Checks if action value exists
-		$action = $_POST["action"];
-		switch($action) { //Switch case for value of action
-			case "test": test_function(); break;
-		}
-	}*/
-
-$return = $_POST;
-
-$return["json"] = json_encode($return);
-echo json_encode($return);
-
-}
-
-function test_function(){
-	$return = $_POST;
-
-	$return["json"] = json_encode($return);
-	echo json_encode($return);
-}
-if(isset($_POST['cv'])){
-var_dump($_POST['cv']);
-};
-
-?>
 <br>
 
  <div class="page-header no-print">
@@ -531,8 +508,8 @@ var_dump($_POST['cv']);
 <!-- <form id="commentForm" method="post" action="<?php $PHP_SELF ?>" name="commentForm" class="form-horizontal" accept-charset="utf-8"> -->
 <form id="cv_sec" name="cv_sec" action="<?php $_PHP_SELF ?>" class="js-ajax-php-json" method="post" accept-charset="utf-8" style="z-index:999" >
 <div style="float: right;position:absolute;right:400px;top:50px;">
-	<span>Özgeçmiş Seçin</span>
-	<select name="cv" id="mySelect" onchange="myFunction()" class="form-control input-sm" style="width: 200px">
+	<span class="no-print">Özgeçmiş Seçin</span>
+	<select name="cv" id="mySelect" onchange="myFunction()" class="form-control input-sm no-print" style="width: 200px">
 
 
 	<?php 
@@ -545,6 +522,29 @@ var_dump($_POST['cv']);
 	$conn=connection();
 	
 	$sql="select ad,soyad,e_posta from kisisel_bilgiler";
+	
+	if(isset($_POST['cv'])){
+	
+		$conn=connection();
+	
+		
+		$sql ="select * from kisisel_bilgiler as ks";
+		inner join kariyer_profil as kp on ks.id_kisisel_bilgiler=kp.id_kisisel_bilgiler
+		inner join bilgisayar_bilgisi as bb on ks.id_kisisel_bilgiler=bb.id_kisisel_bilgiler
+		inner join egitim as eg on ks.id_kisisel_bilgiler=eg.id_kisisel_bilgiler
+		inner join kurs as kr on ks.id_kisisel_bilgiler=kr.id_kisisel_bilgiler
+		inner join profesyonel_deneyim as pd on ks.id_kisisel_bilgiler=pd.id_kisisel_bilgiler
+		inner join yabanci_dil as yd on ks.id_kisisel_bilgiler=yd.id_kisisel_bilgiler
+		where ks.e_posta='muratkirmizigul@gmail.com'
+		
+		$sql = "select * from kisisel_bilgiler";
+	
+		$query = $conn->prepare($sql);
+	
+		$sonuc = $query->execute();*/
+	
+		//$_POST['cv']
+	};
 
 	?>
 	
@@ -568,7 +568,7 @@ var_dump($_POST['cv']);
 <div id="rootwizard" >
 <form id="commentForm" action="<?php $_PHP_SELF ?>" class="js-ajax-php-json" method="post" accept-charset="utf-8" name="commentForm">
 <div>
-<input class="btn btn-danger"   type="reset" value="Yeni CV Oluştur">
+<input class="btn btn-danger no-print"   type="reset" value="Yeni CV Oluştur">
 </div>
 <br>
 </select>

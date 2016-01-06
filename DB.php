@@ -3,8 +3,8 @@
 function connection(){
 
 	$servername = "localhost";
-	$username = "ozgecmis";
-	$password = "ozgecmis";
+	$username = "root";
+	$password = "root";
 
 	$conn = new PDO("mysql:host=$servername;dbname=ozgecmis;charset=utf8", $username, $password);
 	// set the PDO error mode to exception
