@@ -516,8 +516,9 @@ function test_function(){
 	$return["json"] = json_encode($return);
 	echo json_encode($return);
 }
-
+if(isset($_POST['cv'])){
 var_dump($_POST['cv']);
+};
 
 ?>
 <br>
