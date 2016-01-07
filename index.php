@@ -459,13 +459,13 @@
               		$("#f_bilgisayar").append("<b>Programlama Dilleri :</b> "+$("#programlama_dili").val()+"<br/>");
               		$("#f_bilgisayar").append("<b>Diğer :</b> "+$("#diger").val());
               		}
-
+              		dogumTarih=FormatDateVT(dogumTarih);
               		var data={
                       		"trans":trans,
     						"adi":adi,
     						"soyadi":soyadi,
     						"email":email,
-    						"dogumTarih":FormatDateVT(dogumTarih),
+    						"dogumTarih":dogumTarih,
     						"telefon":telefon,
     						"askerlik":askerlik,
     						"medeni":medeni,
@@ -560,23 +560,34 @@
 
 		$conn2=connection();
 	
-		$sqlForm ="select * from kisisel_bilgiler as ks";
+		$sqlForm ="select	ks.id_kisisel_bilgiler,	ks.ad,	ks.soyad,	ks.e_posta,	ks.kariyer_profili,	ks.dogum_tarihi, ";
+		$sqlForm .="ks.medeni_durum,ks.askerlik_hizmeti,ks.telefon,kp.kariyer_bilgileri,bb.isletim_sistemleri,bb.programlama_dilleri,bb.diger, ";
+		$sqlForm .="kr.kurs_aciklamalar ";
+		$sqlForm .=" from kisisel_bilgiler as ks";
 		$sqlForm .=" inner join kariyer_profil as kp on ks.id_kisisel_bilgiler=kp.id_kisisel_bilgiler";
 		$sqlForm .=" inner join bilgisayar_bilgisi as bb on ks.id_kisisel_bilgiler=bb.id_kisisel_bilgiler";
-		$sqlForm .=" inner join egitim as eg on ks.id_kisisel_bilgiler=eg.id_kisisel_bilgiler";
 		$sqlForm .=" inner join kurs as kr on ks.id_kisisel_bilgiler=kr.id_kisisel_bilgiler";
-		$sqlForm .=" inner join profesyonel_deneyim as pd on ks.id_kisisel_bilgiler=pd.id_kisisel_bilgiler";
-		$sqlForm .=" inner join yabanci_dil as yd on ks.id_kisisel_bilgiler=yd.id_kisisel_bilgiler";
 		$sqlForm .=" where ks.e_posta='".$email."'";
 		
 		
-	
 		$sonucForm = $conn2->query($sqlForm);
 		$value=null;
 		foreach ($conn2->query($sqlForm) as $value) {
 			
 		}
 		//$_POST['cv']
+		
+		$sqlPro ="select * from kisisel_bilgiler as ks  ";
+		$sqlPro .="inner join profesyonel_deneyim as pd on ks.id_kisisel_bilgiler=pd.id_kisisel_bilgiler";
+		$sqlPro .=" where ks.e_posta='".$email."'";
+		
+		$sqlEgitim ="select * from kisisel_bilgiler as ks  ";
+		$sqlEgitim .="inner join egitim as eg on ks.id_kisisel_bilgiler=eg.id_kisisel_bilgiler";
+		$sqlEgitim .=" where ks.e_posta='".$email."'";
+		
+		$sqlDil ="select * from kisisel_bilgiler as ks  ";
+		$sqlDil .="inner join yabanci_dil as yd on ks.id_kisisel_bilgiler=yd.id_kisisel_bilgiler";
+		$sqlDil .=" where ks.e_posta='".$email."'";
 		
 				
 	};
@@ -609,7 +620,7 @@
 <div id="rootwizard" >
 <form id="commentForm" action="<?php $_PHP_SELF ?>" class="js-ajax-php-json" method="post" accept-charset="utf-8" name="commentForm">
 <div>
-<input class="btn btn-danger no-print"   type="button" onclick="reload()" value="Yeni CV Oluştur">
+
 </div>
 <br>
 </select>
@@ -745,14 +756,13 @@
 				</thead>
 				
 				<tbody>
-				<?php $count=0; foreach($conn->query($sqlForm) as $row):?>
+				<?php if(isset($_POST['cv'])):?>
+				<?php  $count=0; foreach($conn->query($sqlPro) as $row):?>
 					<tr id='addr<?php echo $count;?>'>
 						<td>
 						<?php echo $count+1;?>
 						</td>
-						
 						<td>
-						
 						<input type="text" name='firmaAdi<?php echo $count;?>' value="<?php echo isset($row['firma_bilgisi'])?$row['firma_bilgisi']:"";?>"  placeholder='Çalıştığınız Firma Adı' class="form-control input-md"/>
 						</td>
 						<td>
@@ -786,6 +796,44 @@
 					
 					<?php ++$count; endforeach;?>
                     <tr id='addr<?php echo $count;?>'>
+                    <?php else : ?>
+                    <tr id='addr0'>
+						<td>
+						1
+						</td>
+						<td>
+						<input type="text" name='firmaAdi0' value=""  placeholder='Çalıştığınız Firma Adı' class="form-control input-md"/>
+						</td>
+						<td>
+						<input type="text" name='il0' placeholder='Çalıştığınız İl' value="" class="form-control"/>
+						</td>
+						<td>
+						<input type="text" name='ilce0' placeholder='Çalıştığınız İlçe' value="" class="form-control"/>
+						</td>
+						<td>
+						<div class="input-group date input-md" style="width:250px" data-provide="datepicker">
+    							<input value="" id="baslangic0" name="baslangic0" type="text" placeholder='Başlangıç' class="form-control">
+    							<div class="input-group-addon">
+        					<span class="glyphicon glyphicon-th"></span>
+						</div>
+						</td>
+						<td>
+						<div class="input-group date input-md" style="width: 250px" data-provide="datepicker" >
+    						<input value="" id="bitis0" name="bitis0" type="text" placeholder='Bitiş' class="form-control">
+    						<div class="input-group-addon">
+        					<span class="glyphicon glyphicon-th"></span>
+    					</div>
+						</div>    
+						</td>
+						<td>
+						<input value="" type="text" name='pozisyon0' placeholder='Çalıştığınız Pozisyon' class="form-control"/>
+						</td>
+						<td>
+						<input class="form-control" value="" type="text"  name="pozisyondetaylar0" id="pozisyondetaylar0" data-role="tagsinput" />					
+						</td>
+					</tr>
+                    <tr id='addr1'></tr>
+                    <?php endif;?>
 				</tbody>
 			</table>
 			<a id='delete_row_pro' class="pull-left btn btn-default">Satır Sil</a>
@@ -821,7 +869,8 @@
 					</tr>
 				</thead>
 				<tbody>
-				<?php $count=0; foreach($conn->query($sqlForm) as $row):?>
+				<?php if(isset($_POST['cv'])):?>
+				<?php $count=0; foreach($conn->query($sqlEgitim) as $row):?>
 					<tr id='addr_egitim<?php echo $count;?>'>
 						<td>
 						<?php echo $count+1;?>
@@ -853,6 +902,38 @@
 					</tr>
 					<?php ++$count; endforeach;?>
 					<tr id='addr_egitim1'>
+					<?php else : ?>
+					<tr id='addr_egitim0'>
+						<td>
+						1
+						</td>
+						<td>
+						<input value="" type="text" name='okuladi1_0'  placeholder='Okul Adı 1' class="form-control input-md"/>
+						</td>
+						<td>
+						<input value="" type="text" name='okuladi2_0' placeholder='Okul Adı 1' class="form-control"/>
+						</td>
+						<td>
+						<input value=""  type="text" name='bolumu0' placeholder='Bölümü' class="form-control"/>
+						</td>
+						<td>
+						<input value=""  type="text" name='il_0' placeholder='İl' class="form-control"/>
+						</td>
+						<td>
+						<input value=""  type="text" name='ilce_0' placeholder='ilçe' class="form-control"/>
+						</td>
+						<td>
+						<div class="input-group date input-md" style="width: 250px" data-provide="datepicker" >
+    						<input value="" type="text" class="form-control required" placeholder="Mezuniyet Tarihiniz gün/ay/yıl" id="mezuniyet0" name="mezuniyet0">
+    						<div class="input-group-addon">
+        					<span class="glyphicon glyphicon-th"></span>
+    					</div>
+						</div>    
+						</td>
+						
+					</tr>
+					<tr id='addr_egitim1'>
+					<?php endif;?>
 				</tbody>
 			</table>
 			<a id='delete_row_egitim' class="pull-left btn btn-default">Satır Sil</a><a id="add_row_egitim" class="btn btn-default pull-right">Satır Ekle</a>
@@ -913,7 +994,8 @@
 					</tr>
 				</thead>
 				<tbody>
-				<?php $count=0; foreach($conn->query($sqlForm) as $row):?>
+				<?php if(isset($_POST['cv'])):?>
+				<?php $count=0; foreach($conn->query($sqlDil) as $row):?>
 				
 					<tr id='addr_dil<?php echo $count;?>'>
 						<td>
@@ -951,6 +1033,44 @@
 					</tr>
 					<?php ++$count; endforeach;?>
                     <tr id='addr_dil1'></tr>
+                    <?php else : ?>
+                    
+                    <tr id='addr_dil0'>
+						<td>
+						1
+						</td>
+						<td>
+						
+						<input value=""  type="text" name='diladi0'  placeholder='Dil Adı' class="form-control input-md"/>
+						</td>
+						
+						<td>
+						<select class="form-control">
+						    <option  name="okuma_seviye" value="Başlangıç">Başlangıç</option>
+						    <option  name="okuma_seviye" value="Orta">Orta</option>
+						    <option  name="okuma_seviye" value="İleri">İleri</option>
+						</select>
+						</div>    
+						</td>
+						<td>
+						<select class="form-control">
+						    <option  name="yazma_seviye" value="Başlangıç">Başlangıç</option>
+						    <option  name="yazma_seviye" value="Orta">Orta</option>
+						    <option  name="yazma_seviye" value="İleri">İleri</option>
+						</select>
+						</div>    
+						</td>
+						<td>
+						<select class="form-control">
+						    <option  name="konusma_seviye" value="Başlangıç">Başlangıç</option>
+						    <option  name="konusma_seviye" value="Orta">Orta</option>
+						    <option  name="konusma_seviye" value="İleri">İleri</option>
+						</select>
+						</div>    
+						</td>
+					</tr>
+                    <tr id='addr_dil1'></tr>
+                    <?php endif;?>
 				</tbody>
 			</table>
 			<a id="add_row_dil" class="btn btn-default pull-right">Satır Ekle</a><a id='delete_row_dil' class="pull-left btn btn-default">Satır Sil</a>
@@ -965,19 +1085,19 @@
 			<div class="form-group">
         	<label for="isletim">Bildiğiniz İşletim Sistemleri: </label>
         	<br>
-          	<input class="form-control" type="text" name="isletim" id="isletim" data-role="tagsinput" />
+          	<input value="<?php echo isset($value['isletim_sistemleri'])?$value['isletim_sistemleri']:"";?>" class="form-control" type="text" name="isletim" id="isletim" data-role="tagsinput" />
         	</div>
         
         <div class="form-group">
             <label for="programlama_dilleri">Bildiğiniz Programlama Dilleri :</label>
         	<br>
-          	<input class="form-control" type="text" name="programlama_dili" id="programlama_dili" data-role="tagsinput" />
+          	<input value="<?php echo isset($value['programlama_dilleri'])?$value['programlama_dilleri']:"";?>" class="form-control" type="text" name="programlama_dili" id="programlama_dili" data-role="tagsinput" />
         </div>
         
         <div class="form-group">
             <label for="diger">Bildiğiniz Diğer :</label>
         	<br>
-          	<input class="form-control" type="text" name="diger" id="diger" data-role="tagsinput" />
+          	<input value="<?php echo isset($value['diger'])?$value['diger']:"";?>"  class="form-control" type="text" name="diger" id="diger" data-role="tagsinput" />
         </div>
 		</section>
 		</div>

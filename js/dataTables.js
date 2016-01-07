@@ -1,5 +1,5 @@
 /* profesyonel deneyim tablo*/	
-
+var a=1;
 
                   $("#add_row_pro").click(function(){
                 	  
