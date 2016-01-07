@@ -57,6 +57,10 @@
               		
               		//data = $.param(data);
               		
+              		
+
+					
+              		
               		$.ajax({
               		type: "POST",
               		cache:false,
@@ -171,7 +175,7 @@
                     	});
                 	});
                     
-              	  	/*$('#rootwizard').bootstrapWizard({
+              	  	$('#rootwizard').bootstrapWizard({
               	  		'tabClass': 'nav nav-tabs'
                   	  	,
               	  		'onNext': function(tab, navigation, index) {
@@ -191,7 +195,7 @@
 
                   	  		
               	  	
-              	  	});	*/
+              	  	});	
 
               	  $('#rootwizard').bootstrapWizard({onTabShow: function(tab, navigation, index) {
               		var $total = navigation.find('li').length;
@@ -302,6 +306,12 @@
               		//$("#f_kisisel").empty();
               		/*Kişisel bilgiler*/
               		
+              		var trans;
+              		if($("#trans").val()==""){
+						trans=0;
+                  	}else{
+                  		trans=$("#trans").val();
+                      	}
               		
               		var adi=$("#ad").val();
               		var soyadi=$("#soyad").val();
@@ -371,7 +381,7 @@
               				profesyonelDeneyim.push({
                               		"firmaBilgisi":values[i][0],
                               		"sehir":values[i][1],
-                      				"ulke":values[i][2],
+                      				"ilce":values[i][2],
                       				"pozisyon":values[i][5],
                       				"baslangic_tarihi":values[i][3],
                       				"ayrilma_tarihi":values[i][4],
@@ -442,7 +452,9 @@
               			}
           				dil.push({
 							"dil":values[i][0],
-							"duzey":values[i][1]+","+values[i][2]+","+values[i][3]
+							"okuma":values[i][1],
+							"yazma":values[i][2],
+							"konusma":values[i][3]
 							});
                  	}
 
@@ -454,6 +466,7 @@
               		}
 
               		var data={
+                      		"trans":trans,
     						"adi":adi,
     						"soyadi":soyadi,
     						"email":email,
@@ -515,6 +528,7 @@
 	<?php 
 	
 	error_reporting(E_ALL);
+	
 	ini_set('display_errors', '1');
 	
 	include 'DB.php';
@@ -523,28 +537,42 @@
 	
 	$sql="select ad,soyad,e_posta from kisisel_bilgiler";
 	
+	
+	
 	if(isset($_POST['cv'])){
-	
-		$conn=connection();
-	
 		
-		$sql ="select * from kisisel_bilgiler as ks";
-		inner join kariyer_profil as kp on ks.id_kisisel_bilgiler=kp.id_kisisel_bilgiler
-		inner join bilgisayar_bilgisi as bb on ks.id_kisisel_bilgiler=bb.id_kisisel_bilgiler
-		inner join egitim as eg on ks.id_kisisel_bilgiler=eg.id_kisisel_bilgiler
-		inner join kurs as kr on ks.id_kisisel_bilgiler=kr.id_kisisel_bilgiler
-		inner join profesyonel_deneyim as pd on ks.id_kisisel_bilgiler=pd.id_kisisel_bilgiler
-		inner join yabanci_dil as yd on ks.id_kisisel_bilgiler=yd.id_kisisel_bilgiler
-		where ks.e_posta='muratkirmizigul@gmail.com'
+		$email=$_POST['cv'];
 		
-		$sql = "select * from kisisel_bilgiler";
+		
+
+		$conn2=connection();
 	
-		$query = $conn->prepare($sql);
+		$sqlForm ="select * from kisisel_bilgiler as ks";
+		$sqlForm .=" inner join kariyer_profil as kp on ks.id_kisisel_bilgiler=kp.id_kisisel_bilgiler";
+		$sqlForm .=" inner join bilgisayar_bilgisi as bb on ks.id_kisisel_bilgiler=bb.id_kisisel_bilgiler";
+		$sqlForm .=" inner join egitim as eg on ks.id_kisisel_bilgiler=eg.id_kisisel_bilgiler";
+		$sqlForm .=" inner join kurs as kr on ks.id_kisisel_bilgiler=kr.id_kisisel_bilgiler";
+		$sqlForm .=" inner join profesyonel_deneyim as pd on ks.id_kisisel_bilgiler=pd.id_kisisel_bilgiler";
+		$sqlForm .=" inner join yabanci_dil as yd on ks.id_kisisel_bilgiler=yd.id_kisisel_bilgiler";
+		$sqlForm .=" where ks.e_posta='".$email."'";
+		
+		
 	
-		$sonuc = $query->execute();*/
-	
+		$sonucForm = $conn2->query($sqlForm);
+		$value=null;
+		foreach ($conn2->query($sqlForm) as $value) {
+			
+		}
 		//$_POST['cv']
+		
+				
 	};
+	
+	function reload(){
+			location.reload();
+	
+	}
+	
 
 	?>
 	
@@ -562,13 +590,13 @@
 
 
 
-
+<input type="hidden" id="trans" value="<?php echo isset($value['id_kisisel_bilgiler'])?$value['id_kisisel_bilgiler']:"";?>">
 <div class="row col-lg-10">
 
 <div id="rootwizard" >
 <form id="commentForm" action="<?php $_PHP_SELF ?>" class="js-ajax-php-json" method="post" accept-charset="utf-8" name="commentForm">
 <div>
-<input class="btn btn-danger no-print"   type="reset" value="Yeni CV Oluştur">
+<input class="btn btn-danger no-print"   type="button" onclick="reload()" value="Yeni CV Oluştur">
 </div>
 <br>
 </select>
@@ -591,21 +619,22 @@
 		<section>
         <label for="ad">Adınız</label>
         <div class="form-group">
-            <input placeholder="Adınız" id="ad" name="ad" type="text" class="form-control required">
+        
+            <input placeholder="Adınız" id="ad" name="ad" type="text" class="form-control required" value="<?php echo isset($value['ad'])?$value['ad']:"";?>">
         </div>
         <label for="soyad">Soyadınız</label>
         <div class="form-group">
-            <input placeholder="Soyadınız" id="soyad" name="soyad" type="text" class="form-control required">
+            <input placeholder="Soyadınız" id="soyad" name="soyad" type="text" class="form-control required"  value="<?php echo isset($value['soyad'])?$value['soyad']:"";?>">
         </div>
         
         <label for="exampleInputName2">Medeni Haliniz</label>
         <br>
         <div id="exampleInputName2" class="btn-group" data-toggle="buttons">
-  				<label class="btn btn-primary">
-    			<input type="radio" name="medeni" autocomplete="off" value="Bekar">Bekar
+  				<label class="btn btn-primary <?php echo isset($value['medeni_durum'])&&$value['medeni_durum']=="Bekar"?"active":"";?>"">
+    			<input <?php echo isset($value['medeni_durum'])&&$value['medeni_durum']=="Bekar"?"checked":"";?> type="radio" name="medeni" value="Bekar" >Bekar
   				</label>
-  				<label class="btn btn-primary">
-    			<input type="radio" name="medeni" autocomplete="off" value="Evli">Evli
+  				<label class="btn btn-primary <?php echo isset($value['medeni_durum'])&&$value['medeni_durum']=="Evli"?"active":"";?>"">
+    			<input <?php echo isset($value['medeni_durum'])&&$value['medeni_durum']=="Evli"?"checked":"";?> type="radio" name="medeni" value="Evli">Evli
   				</label>
   				
 		</div>
@@ -615,14 +644,14 @@
         <label for="exampleInputName2">Askerlik Durumunuz</label>
         <br>
         <div id="exampleInputName2" class="btn-group" data-toggle="buttons">
-  				<label class="btn btn-primary">
-    			<input type="radio" name="askerlik" value="Yaptı" autocomplete="off">Yaptı
+  				<label class="btn btn-primary <?php echo isset($value['askerlik_hizmeti'])&&$value['askerlik_hizmeti']=="Yaptı"?"active":"";?>"">
+    			<input <?php echo isset($value['askerlik_hizmeti'])&&$value['askerlik_hizmeti']=="Yaptı"?"checked":"";?> type="radio" name="askerlik" value="Yaptı" autocomplete="off">Yaptı
   				</label>
-  				<label class="btn btn-primary">
-    			<input type="radio" name="askerlik" value="Muaf" autocomplete="off">Muaf
+  				<label class="btn btn-primary <?php echo isset($value['askerlik_hizmeti'])&&$value['askerlik_hizmeti']=="Muaf"?"active":"";?>"">
+    			<input <?php echo isset($value['askerlik_hizmeti'])&&$value['askerlik_hizmeti']=="Muaf"?"checked":"";?> type="radio" name="askerlik" value="Muaf" autocomplete="off">Muaf
   				</label>
-  				<label class="btn btn-primary">
-    			<input type="radio" name="askerlik" value="Tecilli" autocomplete="off">Tecilli
+  				<label class="btn btn-primary <?php echo isset($value['askerlik_hizmeti'])&&$value['askerlik_hizmeti']=="Tecilli"?"active":"";?>"">
+    			<input <?php echo isset($value['askerlik_hizmeti'])&&$value['askerlik_hizmeti']=="Tecilli"?"checked":"";?> type="radio" name="askerlik" value="Tecilli" autocomplete="off">Tecilli
   				</label>
   				
 		</div>
@@ -630,7 +659,7 @@
         <br>
         <label for="dogumTarihi">Doğum Tarihiniz</label>
         <div class="input-group date" data-provide="datepicker" >
-    		<input type="text" class="form-control required" placeholder="Doğum Tarihiniz gün/ay/yıl" id="dogumTarihi" name="dogumTarihi">
+    		<input type="text" class="form-control required" value="<?php echo isset($value['dogum_tarihi'])?date('d.m.Y',strtotime($value['dogum_tarihi'])):"";?>" placeholder="Doğum Tarihiniz gün/ay/yıl" id="dogumTarihi" name="dogumTarihi" >
     			<div class="input-group-addon">
         		<span class="glyphicon glyphicon-th"></span>
     		</div>
@@ -638,12 +667,12 @@
             <br>
         <label for="eposta">E posta adresiniz</label>
         <div class="form-group">
-            <input placeholder="E-Posta Adresiniz" id="eposta" name="eposta" type="text" class="form-control required">
+            <input placeholder="E-Posta Adresiniz" id="eposta" name="eposta" type="text" class="form-control required" value="<?php echo isset($value['e_posta'])?$value['e_posta']:"";?>">
         </div>
             
         <div class="form-group">
         	<label for="telefon">Telefon Numaranız</label>
-            <input placeholder="Telefon Numaranız" id="telefon" name="telefon" type="text" class="form-control required">
+            <input placeholder="Telefon Numaranız" id="telefon" name="telefon" type="text"   value="<?php echo isset($value['telefon'])?$value['telefon']:"";?>" class="form-control required">
         </div>
 
         </section>
@@ -655,12 +684,12 @@
 	    <br>
 	    <div class="form-group">
         	<label for="kariyer">Kariyer profiliniz : </label>
-          	<textarea class="form-control" rows="3" name="kariyer" id="kariyer"></textarea>
+          	<textarea class="form-control" rows="3" name="kariyer" id="kariyer"><?php echo isset($value['kariyer_profili'])?$value['kariyer_profili']:"";?></textarea>
         </div>
         <div class="form-group">
         	<label for="kariyer_deneyim">Kariyer Deneyimleriniz (maddeler halinde yazmak için cümle sonlarında enter a basınız.): </label>
         	<br>
-          	<input class="form-control" type="text" name="kariyer_deneyim" id="kariyer_deneyim" data-role="tagsinput" />
+          	<input class="form-control" type="text" value="<?php echo isset($value['kariyer_bilgileri'])?$value['kariyer_bilgileri']:"";?>" name="kariyer_deneyim" id="kariyer_deneyim" data-role="tagsinput" />
         </div>
 	    </section>
 	    
@@ -701,43 +730,49 @@
 						</th>
 					</tr>
 				</thead>
+				
 				<tbody>
-					<tr id='addr0'>
+				<?php $count=0; foreach($conn->query($sqlForm) as $row):?>
+					<tr id='<?php echo $count;?>'>
 						<td>
-						1
+						<?php echo $count+1;?>
+						</td>
+						
+						<td>
+						
+						<input type="text" name='firmaAdi<?php echo $count;?>' value="<?php echo isset($row['firma_bilgisi'])?$row['firma_bilgisi']:"";?>"  placeholder='Çalıştığınız Firma Adı' class="form-control input-md"/>
 						</td>
 						<td>
-						<input type="text" name='firmaAdi0'  placeholder='Çalıştığınız Firma Adı' class="form-control input-md"/>
+						<input type="text" name='il<?php echo $count;?>' placeholder='Çalıştığınız İl' value="<?php echo isset($row['sehir'])?$row['sehir']:"";?>" class="form-control"/>
 						</td>
 						<td>
-						<input type="text" name='il0' placeholder='Çalıştığınız İl' class="form-control"/>
-						</td>
-						<td>
-						<input type="text" name='ilce0' placeholder='Çalıştığınız İlçe' class="form-control"/>
+						<input type="text" name='ilce<?php echo $count;?>' placeholder='Çalıştığınız İlçe' value="<?php echo isset($row['ilce'])?$row['ilce']:"";?>" class="form-control"/>
 						</td>
 						<td>
 						<div class="input-group date input-md" style="width:250px" data-provide="datepicker">
-    							<input id="baslangic0" name="baslangic0" type="text" placeholder='Başlangıç' class="form-control" value="">
+    							<input value="<?php echo isset($row['dogum_tarihi'])?date('d.m.Y',strtotime($row['baslangic_tarihi'])):"";?>" id="baslangic<?php echo $count;?>" name="baslangic<?php echo $count;?>" type="text" placeholder='Başlangıç' class="form-control">
     							<div class="input-group-addon">
         					<span class="glyphicon glyphicon-th"></span>
 						</div>
 						</td>
 						<td>
 						<div class="input-group date input-md" style="width: 250px" data-provide="datepicker" >
-    						<input id="bitis0" name="bitis0" type="text" placeholder='Bitiş' class="form-control" value="">
+    						<input value="<?php echo isset($value['dogum_tarihi'])?date('d.m.Y',strtotime($row['ayrilma_tarihi'])):"";?>" id="bitis<?php echo $count;?>" name="bitis<?php echo $count;?>" type="text" placeholder='Bitiş' class="form-control">
     						<div class="input-group-addon">
         					<span class="glyphicon glyphicon-th"></span>
     					</div>
 						</div>    
 						</td>
 						<td>
-						<input type="text" name='pozisyon0' placeholder='Çalıştığınız Pozisyon' class="form-control"/>
+						<input value="<?php echo isset($row['pozisyon'])?$row['pozisyon']:"";?>" type="text" name='pozisyon<?php echo $count;?>' placeholder='Çalıştığınız Pozisyon' class="form-control"/>
 						</td>
 						<td>
-						<input class="form-control" type="text"  name="pozisyondetaylar0" id="pozisyondetaylar0" data-role="tagsinput" />					
+						<input class="form-control" value="<?php echo isset($row['aciklamalar'])?$row['aciklamalar']:"";?>" type="text"  name="pozisyondetaylar<?php echo $count;?>" id="pozisyondetaylar<?php echo $count;?>" data-role="tagsinput" />					
 						</td>
 					</tr>
-                    <tr id='addr1'></tr>
+					
+					<?php ++$count; endforeach;?>
+                    <tr id='<?php echo $count;?>'>
 				</tbody>
 			</table>
 			<a id='delete_row_pro' class="pull-left btn btn-default">Satır Sil</a>
@@ -773,28 +808,29 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr id='addr_egitim0'>
+				<?php for($i=0;$i<count(isset($sonucForm)?0:0);$i++):?>
+					<tr id='addr_egitim<?php echo $i;?>'>
 						<td>
 						1
 						</td>
 						<td>
-						<input type="text" name='okuladi1_0'  placeholder='Okul Adı 1' class="form-control input-md"/>
+						<input value="<?php echo isset($value['okul_adi'][$i])?$value['okul_adi'][$i]:"";?>" type="text" name='okuladi1_<?php echo $i;?>'  placeholder='Okul Adı 1' class="form-control input-md"/>
 						</td>
 						<td>
-						<input type="text" name='okuladi2_0' placeholder='Okul Adı 1' class="form-control"/>
+						<input value="<?php echo isset($value['fakulte_adi'][$i])?$value['fakulte_adi'][$i]:"";?>" type="text" name='okuladi2_<?php echo $i;?>' placeholder='Okul Adı 1' class="form-control"/>
 						</td>
 						<td>
-						<input type="text" name='bolumu0' placeholder='Bölümü' class="form-control"/>
+						<input value="<?php echo isset($value['bolum_adi'][$i])?$value['bolum_adi'][$i]:"";?>"  type="text" name='bolumu<?php echo $i;?>' placeholder='Bölümü' class="form-control"/>
 						</td>
 						<td>
-						<input type="text" name='il_0' placeholder='İl' class="form-control"/>
+						<input value="<?php echo isset($value['sehir'][$i])?$value['sehir'][$i]:"";?>"  type="text" name='il_<?php echo $i;?>' placeholder='İl' class="form-control"/>
 						</td>
 						<td>
-						<input type="text" name='ilce_0' placeholder='ilçe' class="form-control"/>
+						<input value="<?php echo isset($value['ilce'][$i])?$value['ilce'][$i]:"";?>"  type="text" name='ilce_<?php echo $i;?>' placeholder='ilçe' class="form-control"/>
 						</td>
 						<td>
 						<div class="input-group date input-md" style="width: 250px" data-provide="datepicker" >
-    						<input type="text" class="form-control required" placeholder="Mezuniyet Tarihiniz gün/ay/yıl" id="mezuniyet" name="mezuniyet0">
+    						<input value="<?php echo isset($value['mezuniyet_tarihi'])?date('d.m.Y',strtotime($value['mezuniyet_tarihi'])):"";?>" type="text" class="form-control required" placeholder="Mezuniyet Tarihiniz gün/ay/yıl" id="mezuniyet<?php echo $i;?>" name="mezuniyet<?php echo $i;?>">
     						<div class="input-group-addon">
         					<span class="glyphicon glyphicon-th"></span>
     					</div>
@@ -802,6 +838,7 @@
 						</td>
 						
 					</tr>
+					<?php endfor;?>
 					<tr id='addr_egitim1'>
 				</tbody>
 			</table>
@@ -822,14 +859,16 @@
 					</tr>
 				</thead>
 				<tbody>
+				
 					<tr id='addr2'>
 
 						<td>
-						<input class="form-control" type="text"  name="kursadi0" id="kursadi0" data-role="tagsinput" />
+						<input  value="<?php echo isset($value['kurs_aciklamalar'])?$value['kurs_aciklamalar']:"";?>"  class="form-control" type="text"  name="kursadi0" id="kursadi0" data-role="tagsinput" />
 						
 						</td>
 
 					</tr>
+				
                     <tr id='addr1'></tr>
 				</tbody>
 			</table>
@@ -861,19 +900,21 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr id='addr_dil0'>
+				<?php for($i=0;$i<count(isset($sonucForm)?count($sonucForm):0);$i++):?>
+					<tr id='addr_dil<?php echo $i;?>'>
 						<td>
-						1
+						1 
 						</td>
 						<td>
-						<input type="text" name='diladi0'  placeholder='Dil Adı' class="form-control input-md"/>
+						
+						<input value="<?php echo isset($value['dil'][$i])?$value['dil'][$i]:"";?>"  type="text" name='diladi<?php echo $i;?>'  placeholder='Dil Adı' class="form-control input-md"/>
 						</td>
 						
 						<td>
 						<select class="form-control">
-						    <option name="okuma_seviye" value="Başlangıç">Başlangıç</option>
-						    <option name="okuma_seviye" value="Orta">Orta</option>
-						    <option name="okuma_seviye" value="İleri">İleri</option>
+						    <option <?php echo isset($value['okuma'][$i])&&$value['okuma'][$i]=="Başlangıç"?"selected":"";?> name="okuma_seviye" value="Başlangıç">Başlangıç</option>
+						    <option <?php echo isset($value['okuma'][$i])&&$value['okuma'][$i]=="Orta"?"selected":"";?> name="okuma_seviye" value="Orta">Orta</option>
+						    <option <?php echo isset($value['okuma'][$i])&&$value['okuma'][$i]=="ileri"?"selected":"";?> name="okuma_seviye" value="İleri">İleri</option>
 						</select>
 						</div>    
 						</td>
@@ -894,6 +935,7 @@
 						</div>    
 						</td>
 					</tr>
+					<?php endfor;?>
                     <tr id='addr_dil1'></tr>
 				</tbody>
 			</table>
@@ -930,7 +972,6 @@
 	    	<section>
 	    	
 	    	<div id="cv_result">
-	    	
 	    	<h3 id="f_adi"></h1>
 	    	<span>Email: <span id="f_email"></span></span>
 	    	<br/>

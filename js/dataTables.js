@@ -1,6 +1,19 @@
-/* profesyonel deneyim tablo*/		
-var a=1;
+/* profesyonel deneyim tablo*/	
+
+
                   $("#add_row_pro").click(function(){
+                	  
+                	  var max = 0;
+                	  $('#tab_pro tr').each(function(i,n){
+                	   // var check = $(n).children('input').attr('id')/*.prop() if jquery 1.6*/
+                	    var check = $(n).children('td').attr('id');/*.prop() if jquery 1.6*/
+                	    
+                	    if(check>max) max = check;
+                	    
+                	  });
+                	  
+                	  alert(max);
+                	  
                    $('#addr'+a).html("<td>"+ (a+1) +
                            "</td><td>"+
                            "<input name='firmaAdi"+a+"' type='text' placeholder='Çalıştığınız Firma Adı' class='form-control input-md'  /> </td>"+
